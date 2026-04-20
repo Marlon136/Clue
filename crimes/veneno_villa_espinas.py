@@ -29,18 +29,70 @@ def crear_kb() -> KnowledgeBase:
     kb = KnowledgeBase()
 
     # Constantes del caso
-    reynaldo       = Term("reynaldo")
-    margot         = Term("margot")
-    pablo          = Term("pablo")
-    bernardo       = Term("bernardo")
+    reynaldo        = Term("reynaldo")
+    margot          = Term("margot")
+    pablo           = Term("pablo")
+    bernardo        = Term("bernardo")
     frasco_arsenico = Term("frasco_arsenico")
 
-    # === YOUR CODE HERE ===
+    kb.add_fact(Predicate("arma_crimen", (frasco_arsenico,)))
+    kb.add_fact(Predicate("huellas_en", (reynaldo, frasco_arsenico)))
+    kb.add_fact(Predicate("lejos_escena", (pablo,)))
+    kb.add_fact(Predicate("lejos_escena", (bernardo,)))
+    kb.add_fact(Predicate("acusa", (pablo, reynaldo)))
+    kb.add_fact(Predicate("da_coartada", (margot, reynaldo)))
+    kb.add_fact(Predicate("da_coartada", (reynaldo, margot)))
+    kb.add_fact(Predicate("sin_coartada_verificada", (reynaldo,)))
 
-    # === END YOUR CODE ===
+    x = Term("$X")
+    y = Term("$Y")
+
+    kb.add_rule(Rule(
+        head=Predicate("evidencia_directa", (x,)),
+        body=(
+            Predicate("huellas_en", (x, y)),
+            Predicate("arma_crimen", (y,))
+        )
+    ))
+
+    kb.add_rule(Rule(
+        head=Predicate("descartado", (x,)),
+        body=(Predicate("lejos_escena", (x,)),)
+    ))
+
+    kb.add_rule(Rule(
+        head=Predicate("testimonio_confiable", (x, y)),
+        body=(
+            Predicate("descartado", (x,)),
+            Predicate("acusa", (x, y))
+        )
+    ))
+
+    kb.add_rule(Rule(
+        head=Predicate("culpable", (x,)),
+        body=(
+            Predicate("evidencia_directa", (x,)),
+            Predicate("sin_coartada_verificada", (x,))
+        )
+    ))
+
+    kb.add_rule(Rule(
+        head=Predicate("encubridor", (x,)),
+        body=(
+            Predicate("da_coartada", (x, y)),
+            Predicate("culpable", (y,))
+        )
+    ))
+
+    kb.add_rule(Rule(
+        head=Predicate("coartada_cruzada", (x, y)),
+        body=(
+            Predicate("da_coartada", (x, y)),
+            Predicate("da_coartada", (y, x))
+        )
+    ))
 
     return kb
-
 
 CASE = CrimeCase(
     id="veneno_villa_espinas",

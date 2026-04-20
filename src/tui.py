@@ -38,6 +38,7 @@ _CASE_MODULES = [
     "crimes.sabotaje_pharmax",
     "crimes.herencia_hacienda_rosal",
     "crimes.red_puerto_sombras",
+    "crimes.incidente_museo_moderno",
 ]
 
 _STATUS_STYLE = {

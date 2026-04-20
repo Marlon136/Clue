@@ -7,6 +7,7 @@ Ejecutar con: pytest tests/test_predicates.py -v
 
 from crimes.herencia_hacienda_rosal import CASE as herencia
 from crimes.red_puerto_sombras import CASE as red_puerto
+from crimes.incidente_museo_moderno import CASE as museo
 from crimes.robo_expreso_sur import CASE as robo
 from crimes.sabotaje_pharmax import CASE as sabotaje
 from crimes.veneno_villa_espinas import CASE as veneno
@@ -191,7 +192,40 @@ class TestRedPuertoSombras:
 
 
 # ---------------------------------------------------------------------------
-# 6. TestForwardChaining
+# 6. TestIncidenteMuseoModerno (Bono)
+# ---------------------------------------------------------------------------
+
+
+class TestIncidenteMuseoModerno:
+    """Backward chaining: 5 queries del caso original del Museo."""
+
+    def setup_method(self) -> None:
+        self.case = museo
+        self.kb = self.case.create_kb()
+
+    def test_elena_descartada(self) -> None:
+        r = backward_chain(self.kb, self.case.queries[0].goal)
+        assert r.success, self.case.queries[0].description
+
+    def test_marcos_culpable(self) -> None:
+        r = backward_chain(self.kb, self.case.queries[1].goal)
+        assert r.success, self.case.queries[1].description
+
+    def test_existe_descartado(self) -> None:
+        r = backward_chain(self.kb, self.case.queries[2].goal)
+        assert r.success, self.case.queries[2].description
+
+    def test_forall_grabados_descartados(self) -> None:
+        r = backward_chain(self.kb, self.case.queries[3].goal)
+        assert r.success, self.case.queries[3].description
+
+    def test_sofia_oportunidad(self) -> None:
+        r = backward_chain(self.kb, self.case.queries[4].goal)
+        assert r.success, self.case.queries[4].description
+
+
+# ---------------------------------------------------------------------------
+# 7. TestForwardChaining
 # ---------------------------------------------------------------------------
 
 
@@ -262,9 +296,15 @@ class TestForwardChaining:
         assert Predicate("descartado", (Term("inspector_nova"),)) in descartados
         assert Predicate("descartado", (Term("capitan_herrera"),)) in descartados
 
+    def test_museo_culpables(self) -> None:
+        kb = museo.create_kb()
+        result = forward_chain(kb)
+        culpables = {f for f in result.derived_facts if f.name == "culpable"}
+        assert Predicate("culpable", (Term("guardia_marcos"),)) in culpables
+
 
 # ---------------------------------------------------------------------------
-# 7. TestNegativeCases
+# 8. TestNegativeCases
 # ---------------------------------------------------------------------------
 
 

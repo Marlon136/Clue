@@ -85,8 +85,8 @@ def eliminate_iff(formula: Formula) -> Formula:
 
     if isinstance(formula, Implies):
         return Implies(
-            eliminate_iff(formula.left),
-            eliminate_iff(formula.right)
+            eliminate_iff(formula.antecedent),
+            eliminate_iff(formula.consequent)
         )
 
     return formula
@@ -115,8 +115,8 @@ def eliminate_implication(formula: Formula) -> Formula:
         return formula
 
     if isinstance(formula, Implies):
-        a = eliminate_implication(formula.left)
-        b = eliminate_implication(formula.right)
+        a = eliminate_implication(formula.antecedent)
+        b = eliminate_implication(formula.consequent)
         return Or(Not(a), b)
 
     if isinstance(formula, Not):
